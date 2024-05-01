@@ -43,6 +43,7 @@ export class Registry {
                         conformances
                     );
                     this.classes[klass.$name] = klass;
+                    this.classes[descriptor.getFullTypeName()] = klass;
                     this.getModule(klass.$moduleName).addClass(klass);
                     break;
                 }
@@ -52,6 +53,7 @@ export class Registry {
                         conformances
                     );
                     this.structs[struct.$name] = struct;
+                    this.structs[descriptor.getFullTypeName()] = struct;
                     this.getModule(struct.$moduleName).addStruct(struct);
                     break;
                 }
@@ -61,6 +63,7 @@ export class Registry {
                         conformances
                     );
                     this.enums[anEnum.$name] = anEnum;
+                    this.enums[descriptor.getFullTypeName()] = anEnum;
                     this.getModule(anEnum.$moduleName).addEnum(anEnum);
                     break;
                 }
@@ -70,6 +73,7 @@ export class Registry {
         for (const protoDesc of getAllProtocolDescriptors()) {
             const proto = new Protocol(protoDesc);
             this.protocols[protoDesc.name] = proto;
+            this.protocols[protoDesc.getFullProtocolName()] = proto;
             this.getModule(proto.moduleName).addProtocol(proto);
         }
     }
@@ -95,18 +99,22 @@ export class SwiftModule {
 
     addClass(klass: Class): void {
         this.classes[klass.$name] = klass;
+        this.classes[klass.descriptor.getFullTypeName(false)] = klass;
     }
 
     addStruct(struct: Struct): void {
         this.structs[struct.$name] = struct;
+        this.structs[struct.descriptor.getFullTypeName(false)] = struct;
     }
 
     addEnum(anEnum: Enum): void {
         this.enums[anEnum.$name] = anEnum;
+        this.enums[anEnum.descriptor.getFullTypeName(false)] = anEnum;
     }
 
     addProtocol(protocol: Protocol): void {
         this.protocols[protocol.name] = protocol;
+        this.protocols[protocol.descriptor.getFullProtocolName(false)] = protocol;
     }
 
     toJSON(): Record<string, number> {

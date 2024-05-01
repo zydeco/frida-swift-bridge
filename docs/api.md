@@ -8,6 +8,8 @@
     * List logical Swift modules. "Logical" because some internal Apple dylibs contain types that belong to different Swift modules. Module names also don't necessarily correspond to the name of the binary. E.g. they could be changed during compliation using the `-module-name <value>` option in the `swiftc` compiler.
 * `Swift.classes`
     * Array containing classes available in all loaded binaries. Module-specfic classes could be retrieved using `Swift.modules.<module name>.classes`. Same for enums, structs and protocols.
+    * Classes are accessible by their simple name (eg `Swift.classes._Storage`), or fully qualified name (`Swift.classes['Foundation.AsyncBytes._Storage']`, `Swift.classes['Network.HTTPFields._Storage']`, etc)
+        * Use the fully-qualified name to deterministically access classes with the same name
     * Each object contains the following properties:
         * `$conformances`: array containing the protocols to which the class conforms.
         * `$fields`: array containing each field implemented by the class, along with its name, type and whether it's a constant.
@@ -17,17 +19,23 @@
         * Constructors which have symbols are callable as properties with a JS-friendly signature that separates the function from the argument list using `$` and replaces the Swift argument separator (`:`) with an `_`. E.g. a `SimpleClass` containing the constructor `init(first: Int, second: Int)` would be callable using `Swift.classes.SimpleClass.init$first_second_()`. The returned object is a `Swift.Object`.
 * `Swift.structs`:
     * Array containing structs available in all loaded binaries.
+    * Structs are accessible by their simple name (eg `Swift.structs.Iterator`), or fully qualified name (`Swift.structs['Foundation.Data.Iterator']`, `Swift.structs['Foundation.Notifications.Iterator']`, `Swift.structs['Network.HTTPFields.HTTPFieldSequence.Iterator']`, etc)
+        * Use the fully-qualified name to deterministically access structs with the same name
     * Each object contains the following properties:
         * `$conformances`: see `Swift.classes`.
         * `$fields`: see, `Swift.classes`.
 * `Swift.enums`:
     * Array containing enums available in all loaded binaries.
+    * Enums are accessible by their simple name (eg `Swift.enums.Error`), or fully qualified name (`Swift.enums['Accelerate.BNNS.Error']`, `Swift.enums['Accelerate.vImage.Error']`, `Swift.enums['InternalSwiftProtobuf.BinaryDelimited.Error']`, etc)
+        * Use the fully-qualified name to deterministically access enums with the same name
     * Each object contains the following properties:
         * `$conformances`: see `Swift.classes`.
         * `$fields`: an array containing the cases defined by the enum. Cases that have associated values have a `typeName` field for the type of the payload.
         * All cases are available as properties. Payload cases are available as functions whose one and only argument is the payload. E.g. `Swift.enums.CGPathFillRule.evenOdd` and `Swift.enums.UnicodeDecodingResult.scalarValue()`. The resulting `Swift.Enum` object can be passed to native Swift functions, see `Swift.NativeFunction`.
 * `Swift.protocols`:
     * Array containing protocols available in all loaded binaries.
+    * Protocols are accessible by their simple name (eg `Swift.protocols.Cipher`), or fully qualified name (`Swift.protocols['CryptoKit.Cipher']`, `Swift.protocols['CryptoKitPrivate.Cipher']`, etc)
+        * Use the fully-qualified name to deterministically access protocols with the same name
     * Each object contains the following properites:
         * `isClassOnly`: a boolean indicating whether the protocol is class-only, i.e. inhertis from `AnyObject`.
         * `numRequirements`: the number of requirements defined by the class.
