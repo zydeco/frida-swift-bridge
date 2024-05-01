@@ -433,9 +433,21 @@ export class TargetTypeContextDescriptor extends TargetContextDescriptor {
         return new NativeFunction(this.accessFunctionPointer, "pointer", []);
     }
 
-    /* XXX: not in the original source */
-    getFullTypeName(): string {
-        return `${this.getModuleContext().name}.${this.name}`;
+    getFullTypeName(includeModuleName: boolean = true): string {
+        let name = this.name;
+        let m = new TargetModuleContextDescriptor(this.parent.get());
+
+        while (m.flags.getKind() !== ContextDescriptorKind.Module) {
+            if (m.flags.getKind() >= ContextDescriptorKind.TypeFirst) {
+                name = m.name + '.' + name;
+            }
+            m = new TargetModuleContextDescriptor(m.parent.get());
+        }
+
+        if (includeModuleName) {
+            name = m.name + '.' + name;
+        }
+        return name;
     }
 }
 
@@ -684,8 +696,21 @@ export class TargetProtocolDescriptor extends TargetContextDescriptor {
         );
     }
 
-    getFullProtocolName(): string {
-        return this.getModuleContext().name + "." + this.name;
+    getFullProtocolName(includeModuleName: boolean = true): string {
+        let name = this.name;
+        let m = new TargetModuleContextDescriptor(this.parent.get());
+
+        while (m.flags.getKind() !== ContextDescriptorKind.Module) {
+            if (m.flags.getKind() >= ContextDescriptorKind.TypeFirst) {
+                name = m.name + '.' + name;
+            }
+            m = new TargetModuleContextDescriptor(m.parent.get());
+        }
+
+        if (includeModuleName) {
+            name = m.name + '.' + name;
+        }
+        return name;
     }
 }
 
