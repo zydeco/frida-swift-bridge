@@ -1,6 +1,6 @@
 RUNNER_ARGS ?=
 
-frida_version := 16.1.4
+frida_version := 16.2.1
 
 cflags := -Wall -pipe -Os -g
 ldflags := -Wl, -framework Foundation -lfrida-gumjs -lresolv -lc++ -Wl,-dead_strip
@@ -8,7 +8,7 @@ ldflags := -Wl, -framework Foundation -lfrida-gumjs -lresolv -lc++ -Wl,-dead_str
 macos_cc := $(shell xcrun --sdk macosx -f clang)
 macos_swift := $(shell xcrun --sdk macosx -f swift)
 macos_sdk := $(shell xcrun --sdk macosx --show-sdk-path)
-macos_cflags := -isysroot "$(macos_sdk)" -arch arm64 $(cflags) -DHAVE_MACOS -DHAVE_V8
+macos_cflags := -isysroot "$(macos_sdk)" -arch arm64 -target arm64-apple-macos10.9 $(cflags) -DHAVE_MACOS -DHAVE_V8
 macos_swift_runtimedir := /usr/lib/swift
 macos_ldflags := "-Wl,-rpath,$(macos_swift_runtimedir)" $(ldflags)
 macos_swiftc := xcrun --sdk macosx swiftc
