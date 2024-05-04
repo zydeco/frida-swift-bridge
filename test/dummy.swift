@@ -283,3 +283,42 @@ func passCompositeClassBoundExistentialThrough(
 func change(number: inout Int) {
     number += 1337
 }
+
+enum Nesting {
+    case a1
+    case a2
+    case a3
+    
+    struct Value {
+        let x: Int8
+    }
+
+    enum Nesting {
+        case b1
+        case b2
+        case b3
+
+        struct Value {
+            let y: Int16
+        }
+
+        enum Nesting {
+            case c1
+            case c2
+            case c3
+
+            struct Value {
+                let z: Int32
+            }
+
+            enum Nesting {
+                case d1
+                case d2
+
+                struct Value {
+                    let w: Int64
+                }
+            }
+        }
+    }
+}
