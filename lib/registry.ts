@@ -42,7 +42,7 @@ export class Registry {
                         descriptor as TargetClassDescriptor,
                         conformances
                     );
-                    this.classes[klass.$name] = klass;
+                    this.classes[klass.$name] ||= klass;
                     this.classes[descriptor.getFullTypeName()] = klass;
                     this.getModule(klass.$moduleName).addClass(klass);
                     break;
@@ -52,7 +52,7 @@ export class Registry {
                         descriptor as TargetStructDescriptor,
                         conformances
                     );
-                    this.structs[struct.$name] = struct;
+                    this.structs[struct.$name] ||= struct;
                     this.structs[descriptor.getFullTypeName()] = struct;
                     this.getModule(struct.$moduleName).addStruct(struct);
                     break;
@@ -62,7 +62,7 @@ export class Registry {
                         descriptor as TargetEnumDescriptor,
                         conformances
                     );
-                    this.enums[anEnum.$name] = anEnum;
+                    this.enums[anEnum.$name] ||= anEnum;
                     this.enums[descriptor.getFullTypeName()] = anEnum;
                     this.getModule(anEnum.$moduleName).addEnum(anEnum);
                     break;
@@ -72,7 +72,7 @@ export class Registry {
 
         for (const protoDesc of getAllProtocolDescriptors()) {
             const proto = new Protocol(protoDesc);
-            this.protocols[protoDesc.name] = proto;
+            this.protocols[protoDesc.name] ||= proto;
             this.protocols[protoDesc.getFullProtocolName()] = proto;
             this.getModule(proto.moduleName).addProtocol(proto);
         }
@@ -98,22 +98,22 @@ export class SwiftModule {
     constructor(readonly name: string) {}
 
     addClass(klass: Class): void {
-        this.classes[klass.$name] = klass;
+        this.classes[klass.$name] ||= klass;
         this.classes[klass.descriptor.getFullTypeName(false)] = klass;
     }
 
     addStruct(struct: Struct): void {
-        this.structs[struct.$name] = struct;
+        this.structs[struct.$name] ||= struct;
         this.structs[struct.descriptor.getFullTypeName(false)] = struct;
     }
 
     addEnum(anEnum: Enum): void {
-        this.enums[anEnum.$name] = anEnum;
+        this.enums[anEnum.$name] ||= anEnum;
         this.enums[anEnum.descriptor.getFullTypeName(false)] = anEnum;
     }
 
     addProtocol(protocol: Protocol): void {
-        this.protocols[protocol.name] = protocol;
+        this.protocols[protocol.name] ||= protocol;
         this.protocols[protocol.descriptor.getFullProtocolName(false)] = protocol;
     }
 
