@@ -62,6 +62,7 @@ TESTLIST_BEGIN (basics)
     TESTENTRY (interceptor_can_parse_indirect_return_value)
     TESTENTRY (interceptor_can_parse_opaque_existential_container_return_value)
     TESTENTRY (interceptor_can_parse_class_existential_container_return_value)
+    TESTENTRY (nested_types_with_same_name_can_be_distinguished)
 TESTLIST_END ()
 
 TESTCASE (modules_can_be_enumerated)
@@ -1052,6 +1053,54 @@ TESTCASE (interceptor_can_parse_class_existential_container_return_value)
     "});"
     "passCompositeClassBoundExistentialThrough(instance);"
   );
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+}
+
+TESTCASE (nested_types_with_same_name_can_be_distinguished)
+{
+  COMPILE_AND_LOAD_SCRIPT (
+    "var checkStruct = (struct, fieldNames, fieldTypes) => {"
+        "var fields = struct.$fields;"
+        "if (fields.length != fieldNames.length) return false;"
+        "for (let i = 0; i < fields.length; i++) {"
+            "if (fields[i].name !== fieldNames[i]) return false;"
+            "if (fields[i].typeName !== fieldTypes[i]) return false;"
+        "};"
+        "return true;"
+    "};"
+    "var checkEnum = (e, fieldNames) => {"
+        "var fields = e.$fields;"
+        "if (fields.length != fieldNames.length) return false;"
+        "for (let i = 0; i < fields.length; i++) {"
+            "if (fields[i].name !== fieldNames[i]) return false;"
+        "}"
+        "return true;"
+    "};"
+    "send(checkStruct(Swift.modules.dummy.structs['Nesting.Value'], ['x'], ['Int8']));"
+    "send(checkStruct(Swift.modules.dummy.structs['Nesting.Nesting.Value'], ['y'], ['Int16']));"
+    "send(checkStruct(Swift.modules.dummy.structs['Nesting.Nesting.Nesting.Value'], ['z'], ['Int32']));"
+    "send(checkStruct(Swift.modules.dummy.structs['Nesting.Nesting.Nesting.Nesting.Value'], ['w'], ['Int64']));"
+    "send(checkStruct(Swift.structs['dummy.Nesting.Value'], ['x'], ['Int8']));"
+    "send(checkStruct(Swift.structs['dummy.Nesting.Nesting.Value'], ['y'], ['Int16']));"
+    "send(checkStruct(Swift.structs['dummy.Nesting.Nesting.Nesting.Value'], ['z'], ['Int32']));"
+    "send(checkStruct(Swift.structs['dummy.Nesting.Nesting.Nesting.Nesting.Value'], ['w'], ['Int64']));"
+
+    "send(checkEnum(Swift.modules.dummy.enums['Nesting'], ['a1', 'a2', 'a3']));"
+    "send(checkEnum(Swift.modules.dummy.enums['Nesting.Nesting'], ['b1', 'b2', 'b3']));"
+    "send(checkEnum(Swift.modules.dummy.enums['Nesting.Nesting.Nesting'], ['c1', 'c2', 'c3']));"
+    "send(checkEnum(Swift.modules.dummy.enums['Nesting.Nesting.Nesting.Nesting'], ['d1', 'd2']));"
+  );
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
+  EXPECT_SEND_MESSAGE_WITH ("true");
   EXPECT_SEND_MESSAGE_WITH ("true");
   EXPECT_SEND_MESSAGE_WITH ("true");
   EXPECT_SEND_MESSAGE_WITH ("true");
